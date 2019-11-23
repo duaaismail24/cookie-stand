@@ -1,0 +1,171 @@
+var ourStoryHandler=function(element){this.clicked=element;this.init();};var mobileMenuHandler=function(element){this.clicked=element.attr('data-section');this.init();};var featuredResHandler=function(element){this.clicked=element.attr('data-restaurant');this.init();}
+var seafoodBarMenusHandler=function(element){this.clicked=element;this.neededValue=this.clicked[0].value;this.init();}
+var seafoodBarMenusCustomTextHandler=function(element){if(element===null){this.hideAll();}else{this.element=element;this.storeMapping=sfbMapping;this.textValue=element[0].value;this.init();}}
+var fishBarSelection=function(element){this.elementClicked=element;this.neededID=this.grabNeededID();this.turnOffMenus();this.turnOnNeededMenu();}
+fishBarSelection.prototype.grabNeededID=function(){return this.elementClicked.data("neededId")}
+fishBarSelection.prototype.turnOffMenus=function(){turnOffSeafoodBarMenus();}
+fishBarSelection.prototype.turnOnNeededMenu=function(){$("#"+this.neededID).addClass("showNoMatterWhat");}
+seafoodBarMenusCustomTextHandler.prototype.init=function(){$('#sfbMenuFinder').val("default");if(this.textValue.length>0){this.placeAllMappingsIntoArray();this.compareInputToKnownNames();}else{this.hideAll();}}
+seafoodBarMenusCustomTextHandler.prototype.placeAllMappingsIntoArray=function(){this.arrayOfNames=Object.keys(this.storeMapping);}
+seafoodBarMenusCustomTextHandler.prototype.compareInputToKnownNames=function(){let nameArray=this.arrayOfNames;let textToSearchFor=this.textValue;let validateSingleResult=[];for(var i=0;i<nameArray.length;i++){if((nameArray[i].toLowerCase()).contains(textToSearchFor.toLowerCase())){validateSingleResult.push(nameArray[i])}}
+if(validateSingleResult.length===1){this.autoFillWithResult(validateSingleResult[0])};}
+seafoodBarMenusCustomTextHandler.prototype.autoFillWithResult=function(valueToGrab){this.element[0].value=valueToGrab;this.makeNeededMenuVisible(valueToGrab);}
+seafoodBarMenusCustomTextHandler.prototype.makeNeededMenuVisible=function(valueToGrab){let neededValue=sfbMapping[valueToGrab].readableID;this.hideAll();this.showNeeded(neededValue);}
+seafoodBarMenusCustomTextHandler.prototype.showNeeded=function(neededValue){$('.menuContainer > .groupContainer[id="'+neededValue+'"]').removeClass('hidden');$('.menuContainer > .groupContainer[id="'+neededValue+'"]').addClass('showNoMatterWhat');}
+seafoodBarMenusCustomTextHandler.prototype.hideAll=function(){$('.menuContainer > div.groupContainer:not(.hidden)').addClass('hidden');$('.menuContainer > div.groupContainer.showNoMatterWhat').removeClass('showNoMatterWhat');};seafoodBarMenusHandler.prototype.init=function(){$('#sfbSelfSelect').val("")
+this.hideAllInactiveSelections();this.showNewActiveSection();}
+seafoodBarMenusHandler.prototype.hideAllInactiveSelections=function(){$('.menuContainer > div.groupContainer:not(.hidden)').addClass('hidden');$('.menuContainer > div.groupContainer.showNoMatterWhat').removeClass('showNoMatterWhat');}
+seafoodBarMenusHandler.prototype.showNewActiveSection=function(){$('.menuContainer > .groupContainer[id="'+this.neededValue+'"]').removeClass('hidden');$('.menuContainer > .groupContainer[id="'+this.neededValue+'"]').addClass('showNoMatterWhat');}
+featuredResHandler.prototype.init=function(){this.hideAllInactiveSections();this.showNewActiveSection(this.clicked);this.hideClickedSection(this.clicked);}
+featuredResHandler.prototype.hideAllInactiveSections=function(){$('.featuredRes > div:not(.hidden)').addClass('hidden');}
+featuredResHandler.prototype.showNewActiveSection=function(element){$('.featuredRes > div.'+element).removeClass('hidden');}
+featuredResHandler.prototype.hideClickedSection=function(element){$(".logosContainer figure.hidden").removeClass("hidden")
+$("figure[data-restaurant='"+element+"']").addClass("hidden")}
+mobileMenuHandler.prototype.init=function(){this.hideAllInactiveSections();this.showNewActiveSection(this.clicked);};mobileMenuHandler.prototype.showNewActiveSection=function(newSection){$("#mobile_"+newSection).removeClass('hidden');};mobileMenuHandler.prototype.hideAllInactiveSections=function(){$('.overview_content').addClass('hidden');};ourStoryHandler.prototype.init=function(){if(this.checkActivePage()){this.activateAppropriateLink();}};ourStoryHandler.prototype.checkActivePage=function(){var currentURL=document.URL;if(currentURL.contains('our-story')){return true;}};ourStoryHandler.prototype.getHashFromLink=function(){var hashText=this.clicked.attr('href').split('#');return hashText[1];};ourStoryHandler.prototype.activateAppropriateLink=function(){var hashText=this.getHashFromLink();$('.ourStoryPage .overview_left.lft ul li a[href="#'+hashText+'"]')[0].click();this.scrollUpToContent();};ourStoryHandler.prototype.scrollUpToContent=function(){document.body.scrollTop=150;};function switchFish(section,$this){if(($($this).hasClass('inactive'))){$('.ourfish_regions').addClass('hidden');$('.ourfish_regions.'+section).removeClass('hidden');$('span.active.fish_nav').addClass('notactive')
+$('span.inactive.fish_nav').addClass('activate')
+$('span.active.fish_nav').removeClass('active')
+$('span.inactive.fish_nav').removeClass('inactive')
+$('span.activate.fish_nav').addClass('active').removeClass('activate')
+$('span.notactive.fish_nav').addClass('inactive').removeClass('notactive')}}
+$('.ourfish').click(function(){fireGif();})
+function fireGif(){$('.fresh1').before('<img src="/images/alert.gif" class="alertGIF"/>');$('.alertGIF').siblings('.descWrap').find('.ffa').css({display:'block'});}
+function turnOffSeafoodBarMenus(){$('.menuContainer > div.groupContainer:not(.hidden)').addClass('hidden');$('.menuContainer > div.groupContainer.showNoMatterWhat').removeClass('showNoMatterWhat');}
+$(function(){if($(".eventImage img").length>0&&$('.eventImage img').attr("src").startsWith("//"))
+{let newSrc=$('.eventImage img').attr("src").replace("//","/");$(".eventImage img").attr("src",newSrc)}
+$("a#menuLink").click(function(){$(".groupNames ul li:first-child").click();});$(".groupNames li").click(function(){var neededID=$(this).data("groupid");$(".groupNames li").removeClass("active");$(this).addClass("active");$(".groupContainer.active").removeClass("active");$(".groupContainer#groupid-"+neededID).addClass("active");});$('.mobile_dropdowns li').click(function(){new mobileMenuHandler($(this));})
+$('.logosContainer figure').click(function(){new featuredResHandler($(this));})
+$('#sfbMenuFinder').change(function(){new seafoodBarMenusHandler($(this));})
+$('#sfbSelfSelect').keyup(function(e){if($(this)[0].value.length>2&&e.keyCode!=8){new seafoodBarMenusCustomTextHandler($(this));}else if($(this)[0].value.length<1){new seafoodBarMenusCustomTextHandler(null);}})
+$('.fishBarOptions li a').click(function(){new fishBarSelection($(this));})
+$('footer .nav.menu li a').on('click',function(e){var linkCheck=$(this).attr('href');if(linkCheck.contains("our-story")&&$('body').hasClass('our-story')){new ourStoryHandler($(this));e.preventDefault();e.stopPropagation();}})
+var dt=new Date();var da=dt.getFullYear();var currentpage=document.location.pathname;var galleryImages=$('.firstThird div, .secondThird div, .thirdThird div')
+galHeight=[];galWidth=[]
+galleryImages.hover(function(){galHeight.length=0;galWidth.length=0;var imageHeight=$(this).height();var imageWidth=$(this).width();galHeight.push(imageHeight);galWidth.push(imageWidth);$(this).height(imageHeight+20)
+$(this).width(imageWidth+20)
+$(this).css({marginLeft:'-5px',marginRight:'-7px',marginTop:'-10px',marginBottom:'-2px',zIndex:'9'})
+var $this=$(this);if(($this).hasClass('photo4')){$(this).css({marginBottom:'-6px'})}},function(){$(this).height(galHeight);$(this).width(galWidth);$(this).css({marginLeft:'4px',marginRight:'4px',marginTop:'4px',marginBottom:'4px',zIndex:'1'})
+if($(this).hasClass('photo5')){$(this).css({marginTop:'8px'})}})
+$('.menus .overview_left li a.menu-list').click(function(){var menugrab=$(this).attr('href').toString().replace('#','');$('.rightmenus').css({display:'none'});$('#'+menugrab).css({display:'block'});});var loc=window.location.pathname.toString().split('/');var locations=loc[2];$(document).on('click','.menu_item img, .menu_item h5',(function(event){var menugo=$(this).attr('class').split(' ');var menugos=menugo[0];window.location='/locations/'+locations+'/'+locations+'-menus#'+menugos;}))
+var menuHash=window.location.hash;var menuShow=menuHash.replace('#','').toLowerCase();if(window.location.pathname.toString().indexOf("ivarsreservations")>-1){triggerClick($("figure[data-restaurant='"+menuShow+"']"))}
+menuShow=menuShow.replace(/ /g,'-');var menuGroups=document.querySelectorAll(".groupNames ul li");for(var i=0;i<menuGroups.length;i++){var testAgainst=menuGroups[i].textContent;testAgainst=testAgainst.toLowerCase();testAgainst=testAgainst.replace(/ /g,'-');if(menuShow==testAgainst){triggerClick(menuGroups[i]);}}
+if(menuShow=='parking_directions'){setTimeout(function(){$('.directions').click();},500);}
+if(menuShow=='menus'){setTimeout(function(){$(".groupNames ul li:first-child").click();},250);}
+console.log(menuShow);function triggerClick(element){setTimeout(function(){element.click();},50);}
+$('.pdflink').each(function(){var link=$(this).attr('href');var newlink=$(this).next('.pressroom.hidden').children('img').attr('src');$(this).attr('href',newlink)})
+var curYear=(new Date).getFullYear();$('#archive').change(function(){if($(this).val()=='all'){$('.press').css({display:'block'})}else{var year='y'+$(this).val();$('.press').css({display:'none'})
+$('.none').remove();$('.'+year).css({display:'block'})
+if($('.'+year).length<1){$('.press').first().before('<div class="none">There are no releases for this time frame.</div>')}}})
+$('#event_title').text($(".opponent").text());$("#event_text").text($(".description").text())
+$('#when').html($(".time").text()+'<span class="super">PM</span>'+$(".date").text())
+$('#where').text($('.stadium').text());$('.link').attr('href',$('.link').text())
+$('#venue_thumb').children('img').attr('src',$('.image').text())
+$('.slidePromos .slideThumb').click(function(){var thumbIndex=$('.slidePromos .slideThumb').index(this);var newActive=document.getElementsByClassName("sliderarea")[thumbIndex+1];newActive=newActive.querySelector("a > img");var dataSrc=$(newActive).attr("data-src");if(dataSrc){newActive.src=$(newActive).attr("data-src");}
+setTimeout(function(){slider.goToSlide(thumbIndex);},200);$('.slidePromos .slideThumb').removeClass('pager-active');$(this).addClass('pager-active');return false;});$('.slidePromos .slideThumb:first').addClass('pager-active');$('.reservations .tab').click(function(){var slideCheck=$(this).parent('.reservations');if((slideCheck).css('bottom')=='-55px'){$(this).parent('.reservations').animate({bottom:'0'},500)}else{$(this).parent('.reservations').animate({bottom:'-55px'},500)}})
+$('.reservations .tab').click();var location=[];var size=[];var time=[];var date=[];$('#locations').change(function(){location.length=0;location.push($(this).val());})
+$('#size').change(function(){size.length=0;size.push($(this).val());})
+$('#timer').change(function(){time.length=0;time.push($(this).val());})
+$('input#date').change(function(){date.length=0;date.push($(this).val())})
+$('.bar img').click(function(){window.open('http://www.opentable.com/opentables.aspx?rid='+location[0]+'&restref='+location[0]+'&m=2&t=single&p='+size[0]+'&d='+date[0]+'%20'+time[0]+'&rtype=ism_mod');})
+var sizeaoc=[];var timeaoc=[];var dateaoc=[];$('#sizeaoc').change(function(){sizeaoc.length=0;sizeaoc.push($(this).val());})
+$('#timeraoc').change(function(){timeaoc.length=0;timeaoc.push($(this).val());})
+$('input#dateaoc').change(function(){dateaoc.length=0;dateaoc.push($(this).val())})
+$('.locs .locLinks .aoc img').click(function(){window.open('http://www.opentable.com/opentables.aspx?rid=22456&restref=22456&m=2&t=single&p='+sizeaoc[0]+'&d='+dateaoc[0]+'%20'+timeaoc[0]+'&rtype=ism_mod');})
+var sizesh=[];var timesh=[];var datesh=[];$('#sizesh').change(function(){sizesh.length=0;sizesh.push($(this).val());})
+$('#timersh').change(function(){timesh.length=0;timesh.push($(this).val());})
+$('input#datesh').change(function(){datesh.length=0;datesh.push($(this).val())})
+$('.locs .locLinks .sh img').click(function(){window.open('http://www.opentable.com/opentables.aspx?rid=22462&restref=22462&m=2&t=single&p='+sizesh[0]+'&d='+datesh[0]+'%20'+timesh[0]+'&rtype=ism_mod');})
+$('.yearcountdown').click(function(){window.location='/our-story?timeline'})
+var curPath=window.location.search;if(curPath=='?timeline'){window.scrollTo(0,1100);}
+var sizeml=[];var timeml=[];var dateml=[];$('#sizeml').change(function(){sizeml.length=0;sizeml.push($(this).val());})
+$('#timerml').change(function(){timeml.length=0;timeml.push($(this).val());})
+$('input#dateml').change(function(){dateml.length=0;dateml.push($(this).val())})
+$('.locs .locLinks .ml img').click(function(){window.open('http://www.opentable.com/opentables.aspx?rid=22459&restref=22459&m=2&t=single&p='+sizeml[0]+'&d='+dateml[0]+'%20'+timeml[0]+'&rtype=ism_mod');})
+var gifRun=false;var gifRun2=false;var gifRun3=false;var gifRun4=false;$(window).scroll(function(){if($(this).scrollTop()>=1250&$(this).scrollTop()<=3000){var offset=parseInt($(this).scrollTop())
+var year=parseInt(da);$('.yearcountdown').animate({top:(offset-950)+'px'},1)
+var countcheck=Math.round(((offset-1250)/16))
+$('.yearcountdown').html(1938+countcheck);if(offset>=950&&!gifRun){$('.contain1 .rightGif img').attr('src','/images/home/Seagull.gif');$('.contain1 .rightGif').animate({left:'-275px',top:'-75px'},1000);gifRun=true;}
+if(offset>=1296&&!gifRun2){$('.contain2 .rightGif').append('<img class="balGif" src="/images/home/Balloon.gif"/>');gifRun2=true;}
+if(offset>=2140&&!gifRun3){$('.contain3 .leftGif').append('<img class="clamGif" src="/images/home/Clem.gif"/>');gifRun3=true;}
+if(offset>=2800&&!gifRun4){$('.sub').animate({top:'170px'},2500).delay(1000).animate({opacity:'0'})
+setTimeout(function(){$('.sub').remove();},4000)
+gifRun4=true;}}})
+$(document).on('click','.region',(function(){$('.desc, .topWedge, .bottomWedge').css({display:'none'})
+$(this).siblings('.descWrap').children('.desc').css({display:'block'})
+$(this).siblings('.descWrap').children('.topWedge').css({display:'block'})}))
+$(document).on('click','._region img',(function(e){var x=e.pageX-$(this).offset().left;var y=e.pageY-$(this).offset().top;$('.desc, .topWedge, .bottomWedge').css({display:'none'})}));var fish=[];$('.fishWrap').first().addClass('active')
+var activeName=$('.active').children('h3').text();$('.fishWrap').each(function(i){fish.push($(this).children('h3.title').text())
+$('.navigation .dots').append('<div class="wrap'+i+'"></div>');})
+$('.navigation .dots div').first().addClass('on')
+$(document).on('click','h5.prev',(function(){if($('._fish .active').prev().length<1){$('.navigation').prev('.fishWrap').addClass('previous')
+$('._fish .active').removeClass('active')
+$('._fish .previous').addClass('active')
+$('._fish .previous').removeClass('previous')
+$('.navigation .dots div.on').removeClass('on')
+$('.navigation .dots div:last-child').addClass('on')}else{$('._fish .active').prev().addClass('previous')
+$('._fish .active').removeClass('active')
+$('._fish .previous').addClass('active')
+$('._fish .previous').removeClass('previous')
+var lowers=$('._fish .active').attr('class')
+var lclasses=lowers.split(' ');$('.navigation .on').removeClass('on')
+$('.navigation .'+lclasses[1]).addClass('on')}}))
+$(document).on('click','h5.next',(function(){if($('._fish .active').next('.fishWrap').length<1){$('._fish .fishWrap.wrap0').addClass('nexts')
+$('._fish .active').removeClass('active')
+$('._fish .nexts').addClass('active')
+$('._fish .nexts').removeClass('nexts')
+$('.navigation .dots div.on').removeClass('on')
+$('.navigation .dots div.wrap0').addClass('on')}
+else{$('._fish .active').next().addClass('nexts')
+$('._fish .active').removeClass('active')
+$('._fish .nexts').addClass('active')
+$('._fish .nexts').removeClass('nexts')
+var lowers=$('._fish .active').attr('class')
+var lclasses=lowers.split(' ');$('.navigation .on').removeClass('on')
+$('.navigation .'+lclasses[1]).addClass('on')}}))
+$(document).on('click','.dots div',(function(){if(!$(this).hasClass('on')){var gotoPage=$(this).attr('class');$('.fishWrap.active').removeClass('active')
+$('.fishWrap.'+gotoPage).addClass('active')
+$('.on').removeClass('on')
+$(this).addClass('on')}}))
+$(document).on('click','.dots div, .navigation h5',(function(){var prevText=$('._fish .active').prev('.fishWrap').children('h3.title').html();var nextText=$('._fish .active').next('.fishWrap').children('h3.title').html();if($('._fish .active').next('.fishWrap').length<1){$('.navigation h5.next').html($('.fishWrap.wrap0').children('h3.title').html());}else{$('.navigation h5.next').html(nextText);}
+if($('._fish .active').prev().length<1){$('.navigation h5.prev').html($('.navigation').prev('.fishWrap').children('h3').html())}else{$('.navigation h5.prev').html(prevText);}}))
+$('.openRes').click(function(){$('.reservations .tab').click();})
+if($('#event_title').text()==''){$('.sportsBar').css({position:'relative',opacity:0,zIndex:-1})}
+$('.filter').change(function(){var valCheck=$(this).val();$('.amount').each(function(){var dropNumber=parseInt(valCheck);var maxcap=parseInt($(this).text());if(dropNumber>=maxcap){var removalID=$(this).parentsUntil('.rightmenus').parent('.rightmenus').attr('id');$(this).parent('tr').css({display:'none'});};if(dropNumber<=maxcap){$(this).parent('tr').css({display:'table-row'});};})})
+$('.overview_left ul li a[href="#menus"]').each(function(){$(this).parent('li').addClass('menus')})
+if(menuShow){$('.contentContainer').addClass('hidden')
+$('#'+menuShow+'.contentContainer').removeClass('hidden');$('.overview_left .active').removeClass('active');let menuLinkAnchor=$('a[href="'+menuHash+'"]');let parentLI=$('a[href="'+menuHash+'"]').parent();parentLI.addClass("active");setTimeout(function(){menuLinkAnchor.click();},50)
+if(menuHash=="#fish"){fireGif();}else if(menuHash=="#partners"){turnon();}}
+$('#facebook div:first-child').click(function(){window.open('http://facebook.com/IvarsRestaurants','_blank');})
+$('#twitter div:first-child').click(function(){window.open('http://twitter.com/IvarsClam','_blank');})
+$('#gd .locLeft img').click(function(){var link=$(this).next('div').children('a').attr('href')
+window.location=link;})
+var sliderLengthL=$('.photoGallery .photoGalleryBlock').length;var sliderLength=sliderLengthL*800;$('aside.right').hover(function(){var timing=$(this).parent().prev('div').css('marginLeft');var timeint=parseInt(timing);var time=(((sliderLength+timeint)/sliderLength)*10)*(sliderLengthL*200);var slideContain=$(this).parent().prev('div');var slideCheck=slideContain.css('marginLeft')
+slideContain.animate({marginLeft:'-'+sliderLength+'px'},time,"linear")},function(){var slideContain=$(this).parent().prev('div');slideContain.stop()})
+$('aside.left').hover(function(){var timing=$(this).parent().prev('div').css('marginLeft');var timeint=parseInt(timing);var time=(((0-timeint)/sliderLength)*10)*(sliderLengthL*200);console.log(timing);var slideContain=$(this).parent().prev('div');slideContain.animate({marginLeft:'0px'},time,"linear")},function(){var slideContain=$(this).parent().prev('div');slideContain.stop()})
+$('li.item-155').attr('onclick',"_gaq.push(['_trackEvent','Engagement','Click','Feedback_Form'])");$('li.item-156').attr('onclick',"_gaq.push(['_trackEvent','Social_Engagement','Social_Click','Facebook_Icon_Click_Header'])");$('li.item-157').attr('onclick',"_gaq.push(['_trackEvent','Social_Engagement','Social_Click','Twitter_Icon_Click_Header'])");$('.searchBox input.search-query').attr('onclick',"_gaq.push(['_trackEvent','site usage','site search','header site search'])");$('.item-120').attr('onclick',"_gaq.push(['_trackEvent','Site Usage','Nav Click','Expand Locations Navigation'])");$('.item-122').attr('onclick',"_gaq.push(['_trackEvent','Site Usage','Nav Click','expand group dining navigation'])");$('footer a.enroll').attr('onclick',"_gaq.push(['_trackEvent','conversion', 'email sign up', 'footer carte clam club'])");$('footer #facebook .title').attr('onclick',"_gaq.push(['_trackEvent','Social Engagement','Social Click','Footer Facebook Icon Click Header'])");$('footer #twitter .title').attr('onclick',"_gaq.push(['_trackEvent','Social Engagement','Social Click','Footer Twitter Icon Click Header'])");$('.reservations .selectWrapper.location').attr('onclick',"_gaq.push(['_trackEvent','mar','F-Location Click','Activate Location Feature'])");$('.reservations .selectWrapper.size').attr('onclick',"_gaq.push(['_trackEvent','mar','F-Location Party Size','Party Size Select'])");$('.reservations .selectWrapper.time').attr('onclick',"_gaq.push(['_trackEvent','mar','F-Location Time','Time Select'])");$('.selectWrapper.location .aoc').attr('onclick',"_gaq.push(['_trackEvent','mar','F-Location Click','Acres Of Clams'])");$('.selectWrapper.location .sh').attr('onclick',"_gaq.push(['_trackEvent','mar','F-Location Click','Salmon House'])");$('.selectWrapper.location .muk').attr('onclick',"_gaq.push(['_trackEvent','mar','F-Location Click','Mukilteo Landing'])");$('.aoc img.button').attr('onclick',"_gaq.push(['_trackEvent','conversion','reservation click','acres-resGO'])");$('.sh img.button').attr('onclick',"_gaq.push(['_trackEvent','conversion','reservation click','shouse-resGO'])");$('.ml img.button').attr('onclick',"_gaq.push(['_trackEvent','conversion','reservation click','muk-resGO'])");$('.reservations img').attr('onclick',"_gaq.push(['_trackEvent','mar','F-Location','Find A Table Click'])");setTimeout(function(){var body=$("body");$('.acres-of-clams .photoGalleryBlock a').each(function(){var imagename=$(this).attr('href')
+var imagenames=imagename.split('/')
+var imagename=imagenames[4]
+if(body.hasClass("group-dining")){$(this).attr('onclick',"_gaq.push(['_trackEvent','site usage','image gallery click','acres-gd-image click-"+imagename+"'])");}else if(body.hasClass("locations")){$(this).attr('onclick',"_gaq.push(['_trackEvent','site usage','image gallery click','acres-image click-"+imagename+"'])");}})
+$('.salmon-house .photoGalleryBlock a').each(function(){var imagename=$(this).attr('href')
+var imagenames=imagename.split('/')
+var imagename=imagenames[4]
+if(body.hasClass("group-dining")){$(this).attr('onclick',"_gaq.push(['_trackEvent','site usage','image gallery click','shouse-gd-image click-"+imagename+"'])");}else if(body.hasClass("locations")){$(this).attr('onclick',"_gaq.push(['_trackEvent','site usage','image gallery click','shouse-image click-"+imagename+"'])");}})
+$('.mukilteo-landing .photoGalleryBlock a').each(function(){var imagename=$(this).attr('href')
+var imagenames=imagename.split('/')
+var imagename=imagenames[4]
+if(body.hasClass("group-dining")){$(this).attr('onclick',"_gaq.push(['_trackEvent','site usage','image gallery click','muk-gd-image click-"+imagename+"'])");}else if(body.hasClass("locations")){$(this).attr('onclick',"_gaq.push(['_trackEvent','site usage','image gallery click','muk-image click-"+imagename+"'])");}})
+$('.seafood-bars .photoGalleryBlock a').each(function(){var imagename=$(this).attr('href')
+var imagenames=imagename.split('/')
+var imagename=imagenames[4]
+$(this).attr('onclick',"_gaq.push(['_trackEvent','site usage','image gallery click','ibar-image click-"+imagename+"'])");})
+$('.sports-venues .photoGalleryBlock a').each(function(){var imagename=$(this).attr('href')
+var imagenames=imagename.split('/')
+var imagename=imagenames[4]
+$(this).attr('onclick',"_gaq.push(['_trackEvent','site usage','image gallery click','svenue-image click-"+imagename+"'])");})
+$('.our-story .photoGalleryBlock a').each(function(){var imagename=$(this).attr('href')
+var imageyear=imagename.substring(2,imagename.length);$(this).attr('onclick',"_gaq.push(['_trackEvent','site usage','timeline click','timeline-"+imageyear+"'])");})},200)
+$('.regContain .region').attr('onclick',"_gaq.push(['_trackEvent','engagement','region fish mouseover','story-fishmouseover'])");$('#k2ModuleBox189').prepend('<h2>In The News</h2>')
+$('.random-image').first().before('<h2>Image Gallery</h2>')
+var pressCount=parseInt($('.pastReleases .press').length);if(pressCount<10){$('.ivarsPress .seeMoreBar').css({display:'none'})}
+$(document).on('click','.seafood-bars .email',(function(){var sfbname=$(this).parentsUntil('.social_container').parent('.social_container').siblings('.seafoodbars.parking').children('h4').text();var sfbaddress=$(this).parentsUntil('.social_container').parent('.social_container').siblings('.seafoodbars.parking').children('p').text();window.location="mailto:?Subject=Check out the "+sfbname+" Ivar's Seafood Bar&body=Looking for an Ivar's fix? Check out the "+sfbname+" Seafood Bar at "+sfbaddress;}))
+setTimeout(function(){},500)
+var mml=window.location.href;var index=mml.indexOf('#');mml=mml.substring(index+1);if(mml=='lm'||mml=='gd'){menuMove(mml);}})

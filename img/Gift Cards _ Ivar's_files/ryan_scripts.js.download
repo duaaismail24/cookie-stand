@@ -1,0 +1,29 @@
+$(document).ready(function(){setTimeout(function(){$('.slideThumb').each(function(){$(this).animate({'right':'155px'},250);$(this).removeClass('out');})},3000)
+$('.ivarsPress .moreButton').on('click',function(){var totalEvents=$(this).parent().siblings('.pastReleases').children('.press').length;console.log(totalEvents);var eventAmount=$(this).parent().siblings('.pastReleases').children('.press:visible');var showevent1=eventAmount.length+1;var showevent2=eventAmount.length+2;var newevent1=$('.item_'+showevent1);var newevent2=$('.item_'+showevent2);newevent1.css({display:'block'});newevent2.css({display:'block'});if(totalEvents==showevent1||totalEvents==showevent2){$(this).parent().remove();}})
+$('.ivarsEvents .moreButton').on('click',function(){var totalEvents=$(this).parent().parent('.mainContentPlus').children('.item').length;console.log(totalEvents);var eventAmount=$(this).parent().parent('.mainContentPlus').children('.item:visible');console.log(eventAmount.length);var showevent1=eventAmount.length+1;var showevent2=eventAmount.length+2;console.log(showevent1);console.log(showevent2);var newevent1=$('.item_'+showevent1);var newevent2=$('.item_'+showevent2);newevent1.css({display:'block'});newevent2.css({display:'block'});if(totalEvents==showevent1||totalEvents==showevent2){$(this).parent().remove();}})
+$('.logo').click(function(){window.location.href="/";});$('.item-120').click(function(){menuMove('lm');});$('.item-122').click(function(){menuMove('gd');});$('.slideThumb').hover(function(){if(!$(this).is(':animated')){var thumbId=this.id;slideThumb(thumbId);}});$('.printIcon').click(function(){window.print();})
+var strLimit1=$('.extraEvent .eventInfo .buffer .detail');if(strLimit1){stringLimit(strLimit1,85);}
+var strLimit4=$('.extraEvent .eventInfo .buffer .title');if(strLimit4){stringLimit(strLimit4,28);}
+var strLimit2=$('.eventsPage .event .eventInfo .buffer .detail');if(strLimit2){stringLimit(strLimit2,65);}
+var strLimit3=$('.promosPage .event .eventInfo .buffer .detail');if(strLimit3){stringLimit(strLimit3,160);}
+$('.noPhone .chooseEvents').change(function(){var event_url=$(this).attr('value');location.href=event_url;});$('.onlyPhone .chooseEvents').change(function(){var event_url=$(this).attr('value');location.href=event_url;});$('.rsform-block-submit input#submit').remove();$('.rsform-block-submit .formBody').append('<input id="submit" type="image" src="/images/corporate_giving/submit_form.png" name="form[submit]">');});function stringLimit(theStrings,strLen){theStrings.each(function(){var limit=$(this);var limitText=limit.text();var textLen=limitText.length;if(textLen>strLen){var limited=limitText.substr(0,strLen);$(limit).text(limited);$(limit).append('...');}})}
+function menuMove(section){var ddMenu=$('.menuDD');var altsection='';if(section=='gd'){altsection='lm';}else{altsection='gd';}
+if($(ddMenu).hasClass('down'))
+{if($('#'+section).is(':visible'))
+{$('.menuDD').animate({'margin-top':'-10px'},400);ddMenu.toggleClass('down');}
+else
+{$('.if_pone #'+altsection+', #'+altsection).animate({'opacity':0},450);$('.if_pone #'+altsection+', #'+altsection).css('display','none');$('.if_pone #'+section+', #'+section).css({display:'block'},{opacity:0});$('.if_pone #'+section+', #'+section).animate({'opacity':1},450)}}
+else
+{$("header.mainHeader + .if_pone").css({"zIndex":"1"})
+$('.if_pone #'+section+', #'+section).css({'display':'block','opacity':1});$('.if_pone #'+altsection+', #'+altsection).css({'display':'none','opacity':0});$('.menuDD').animate({'margin-top':'470px'},400);$(ddMenu).toggleClass('down');}}
+function ddUp(){var ddMenu=jQuery('.menuDD');if($(ddMenu).hasClass('down'))
+{$("header.mainHeader + .if_pone").css({"zIndex":"-1"})
+$('.menuDD').animate({'margin-top':'0'},400);ddMenu.toggleClass('down');}}
+function slideThumb(tid){if($('#'+tid).hasClass('out')){$('#'+tid).animate({'right':'155px'},250);}
+else
+{$('.slideThumb').each(function(){var thumbId=$(this).attr('id');if($('#'+thumbId).hasClass('out')){$('#'+thumbId).animate({'right':'155px'},250);$('#'+thumbId).toggleClass('out');}})
+$('#'+tid).animate({'right':'0px'},250);}
+$('#'+tid).toggleClass('out');}
+function partnerShowBox(pID){var divID='#'+pID;Shadowbox.open({gallery:'partners',content:divID,player:'inline',height:400,width:900});}
+function boxClose(){Shadowbox.close();}
+function sbNext(){Shadowbox.next();}
